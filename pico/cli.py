@@ -614,7 +614,16 @@ def main(argv=None):
 
     mode = interaction_mode(args)
     if mode == "tui":
-        from .tui.app import PicoTuiApp
+        try:
+            from .tui.app import PicoTuiApp
+        except ModuleNotFoundError as exc:
+            if exc.name != "textual":
+                raise
+            print(
+                "TUI support requires the optional 'tui' extra. Install with: pip install 'pico[tui]'",
+                file=sys.stderr,
+            )
+            return 1
 
         PicoTuiApp(agent).run()
         return 0
